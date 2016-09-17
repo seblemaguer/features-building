@@ -1,0 +1,75 @@
+
+apply plugin: 'java'
+
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    jcenter()
+    ivy {
+        url rootDir.path + '/lib/repo'
+        layout 'maven'
+    }
+}
+
+
+dependencies {
+    compile group: 'colt', name: 'colt', version: '1.2.0'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
+    compile group: "org.jgrapht", name: "jgrapht-core", version: "0.9.2"
+    testCompile group: 'org.testng', name: 'testng', version: '6.8.13'
+}
+
+sourceSets {
+    integrationTest {
+        java {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDirs = ["src/integrationTest/java"]
+        }
+        resources {
+            srcDir "src/integrationTest/resources"
+        }
+    }
+}
+
+
+configurations {
+    integrationTestCompile {
+        extendsFrom testCompile
+    }
+    integrationTestRuntime {
+        extendsFrom testRuntime
+    }
+}
+
+task integrationTest(type: Test) {
+    group 'Verification'
+    description 'Runs the integration tests.'
+    check.dependsOn it
+
+    useTestNG()//  {
+    //     includeGroups 'integration'
+    // }
+    testClassesDir = project.sourceSets.integrationTest.output.classesDir
+    classpath = project.sourceSets.integrationTest.runtimeClasspath
+}
+
+tasks.withType(Test) {
+    reports {
+        html.destination = file("$reporting.baseDir/$name")
+        junitXml.destination = file("$testResultsDir/$name")
+    }
+}
+
+test {
+    useTestNG()
+    systemProperty "mary.base", "$rootProject.projectDir/resources"
+}
+
+task packageSources(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
