@@ -245,7 +245,7 @@ public class Relation
     }
 
     /**
-     * /!\ Only to meant to be called by the sequence class /!\
+     * /!\ Only to meant to be called by the sequence class /!  \
      */
     public void removeSourceItem(int source_idx)
     {
@@ -279,7 +279,7 @@ public class Relation
      * Adapt the matrix to take into account a new item on the source sequence at the specified
      * index
      *
-     * /!\ Only to meant to be called by the sequence class /!\
+     * /!\ Only to meant to be called by the sequence class /!  \
      */
     public void addSourceItem(int new_item_idx)
     {
@@ -291,7 +291,7 @@ public class Relation
      * Adapt the matrix to take into account a new item on the source sequence at the specified
      * index
      *
-     * /!\ Only to meant to be called by the sequence class /!\
+     * /!\ Only to meant to be called by the sequence class /!  \
      *
      */
     public void addSourceItem(int new_item_idx, boolean expand_relation)

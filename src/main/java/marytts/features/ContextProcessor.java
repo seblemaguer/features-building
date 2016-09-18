@@ -10,5 +10,5 @@ import marytts.data.item.Item;
  */
 public interface ContextProcessor
 {
-    public Item[] generate(Utterance utt, Item item) throws Exception;
+    public Item generate(Utterance utt, Item item) throws Exception;
 }

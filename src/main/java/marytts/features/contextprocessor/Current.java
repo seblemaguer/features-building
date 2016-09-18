@@ -12,9 +12,9 @@ import marytts.features.ContextProcessor;
  */
 public class Current implements ContextProcessor
 {
-    public Item[] generate(Utterance utt, Item item)
+    public Item generate(Utterance utt, Item item)
         throws Exception
     {
-        return new Item[]{item};
+        return item;
     }
 }

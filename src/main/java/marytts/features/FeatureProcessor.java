@@ -10,5 +10,5 @@ import marytts.data.item.Item;
  */
 public interface FeatureProcessor
 {
-    Feature generate(Utterance utt, Item item);
+    public Feature generate(Utterance utt, Item item) throws Exception;
 }

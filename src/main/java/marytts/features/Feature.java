@@ -19,4 +19,15 @@ public class Feature extends Item
     {
         return m_value;
     }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (!(o instanceof Feature))
+            return false;
+
+        return (getValue() == ((Feature) o).getValue());
+    }
+
+    public static final Feature UNDEF_FEATURE = new Feature(null);
 }

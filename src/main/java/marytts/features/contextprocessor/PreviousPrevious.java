@@ -12,7 +12,7 @@ import marytts.features.ContextProcessor;
  */
 public class PreviousPrevious implements ContextProcessor
 {
-    public Item[] generate(Utterance utt, Item item)
+    public Item generate(Utterance utt, Item item)
         throws Exception
     {
         Sequence<? extends Item> seq = item.getSequence();
@@ -24,6 +24,6 @@ public class PreviousPrevious implements ContextProcessor
             return null;
 
 
-        return new Item[]{seq.get(idx-2)};
+        return seq.get(idx-2);
     }
 }

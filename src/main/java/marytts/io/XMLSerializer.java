@@ -12,6 +12,8 @@ import org.w3c.dom.Node;
 
 import java.io.File;
 import java.io.StringWriter;
+import java.io.StringReader;
+import java.io.IOException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -23,6 +25,11 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.SAXException;
+import org.xml.sax.InputSource;
+
+import marytts.util.dom.MaryEntityResolver;
 
 import marytts.data.utils.IntegerPair;
 import marytts.data.utils.SequenceTypePair;
@@ -36,7 +43,7 @@ import marytts.data.item.phonology.*;
 import marytts.data.item.prosody.*;
 import marytts.data.item.*;
 import marytts.util.MaryUtils;
-
+import marytts.util.string.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -91,13 +98,33 @@ public class XMLSerializer implements Serializer
         }
     }
 
+    public Utterance fromString(String doc_str)
+        throws ParserConfigurationException, SAXException, IOException, MaryIOException
+    {
+        // 1. generate the doc from the string
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setExpandEntityReferences(true);
+		factory.setNamespaceAware(true);
+
+        DocumentBuilder builder = factory.newDocumentBuilder();
+		builder.setEntityResolver(new MaryEntityResolver());
+
+        doc_str = StringUtils.purgeNonBreakingSpaces(doc_str);
+        Document doc =  builder.parse(new InputSource(new StringReader(doc_str)));
+
+        // 2. Generate the utterance from the document
+        return unpackDocument(doc);
+    }
+
+
+
     public Document generateDocument(Utterance utt)
         throws MaryIOException
     {
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-			docFactory.setExpandEntityReferences(true);
-			docFactory.setNamespaceAware(true);
+            docFactory.setExpandEntityReferences(true);
+            docFactory.setNamespaceAware(true);
 
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
@@ -282,9 +309,9 @@ public class XMLSerializer implements Serializer
     }
 
 
-    /************************************************************************************************
-     * Element generation part
-     ***********************************************************************************************/
+/************************************************************************************************
+ * Element generation part
+ ***********************************************************************************************/
     public Utterance unpackDocument(Document doc)
         throws MaryIOException
     {
@@ -315,9 +342,13 @@ public class XMLSerializer implements Serializer
             {
                 Node node = nl.item(j);
 
-                if (node.getNodeType() == Node.TEXT_NODE) {
-                    text += node.getNodeValue().trim() + "\n"; // FIXME: new line directly encoded :
-                    found_text = true;
+                if (node.getNodeType() == Node.TEXT_NODE)
+                {
+                    if (!node.getNodeValue().trim().equals(""))
+                    {
+                        text += node.getNodeValue().trim() + "\n"; // FIXME: new line directly encoded :
+                        found_text = true;
+                    }
                 }
                 j++;
             }
@@ -365,7 +396,9 @@ public class XMLSerializer implements Serializer
             if (node.getNodeType() == Node.TEXT_NODE)
             {
                 logger.info("Unpack the text");
-                text = node.getNodeValue().trim();
+
+                if (!node.getNodeValue().trim().equals(""))
+                    text = node.getNodeValue().trim();
             }
             else if (node.getNodeType() == Node.ELEMENT_NODE)
             {
@@ -450,7 +483,8 @@ public class XMLSerializer implements Serializer
 
             if (node.getNodeType() == Node.TEXT_NODE)
             {
-                text = node.getNodeValue().trim();
+                if (!node.getNodeValue().trim().equals(""))
+                    text = node.getNodeValue().trim();
             }
             else if (node.getNodeType() == Node.ELEMENT_NODE)
             {
@@ -488,6 +522,7 @@ public class XMLSerializer implements Serializer
                 {
                     if (status_loading == 1)
                         throw new MaryIOException("Cannot unserialize a word isolated from a phrase", null);
+                    // FIXME: what do we do with this first child idea....
                     generatePhrase((Element) cur_elt.getFirstChild(), utt, alignments);
                     status_loading = 2;
                 }
@@ -588,7 +623,9 @@ public class XMLSerializer implements Serializer
 
             if (node.getNodeType() == Node.TEXT_NODE)
             {
-                text = node.getNodeValue().trim();
+
+                if (!node.getNodeValue().trim().equals(""))
+                    text = node.getNodeValue().trim();
             }
             else if (node.getNodeType() == Node.ELEMENT_NODE)
             {
@@ -685,7 +722,9 @@ public class XMLSerializer implements Serializer
 
             if (node.getNodeType() == Node.TEXT_NODE)
             {
-                text = node.getNodeValue().trim();
+                if (!node.getNodeValue().trim().equals(""))
+                    text = node.getNodeValue().trim();
+
             }
             else if (node.getNodeType() == Node.ELEMENT_NODE)
             {
@@ -754,7 +793,8 @@ public class XMLSerializer implements Serializer
 
             if (node.getNodeType() == Node.TEXT_NODE)
             {
-                text = node.getNodeValue().trim();
+                if (!node.getNodeValue().trim().equals(""))
+                    text = node.getNodeValue().trim();
             }
             else if (node.getNodeType() == Node.ELEMENT_NODE)
             {

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<maryxml xmlns="http://mary.dfki.de/2002/MaryXML"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="0.5"
+         xml:lang="en-US">
+<p>
+  Welcome to the world of speech synthesis!
+  <s>
+    Welcome to the world of speech synthesis !
+      <phrase>
+        <t ph="' w E l - k @ m" pos="VB">
+          Welcome
+          <syllable stress="1">
+            <ph p="w"/>
+            <ph p="E"/>
+            <ph p="l"/>
+          </syllable>
+          <syllable stress="0">
+            <ph p="k"/>
+            <ph p="@"/>
+            <ph p="m"/>
+          </syllable>
+        </t>
+        <t ph="' t u" pos="TO">
+          to
+          <syllable stress="1">
+            <ph p="t"/>
+            <ph p="u"/>
+          </syllable>
+        </t>
+        <t ph="D @" pos="DT">
+          the
+          <syllable stress="0">
+            <ph p="D"/>
+            <ph p="@"/>
+          </syllable>
+        </t>
+        <t ph="' w r= l d" pos="NN">
+          world
+          <syllable stress="1">
+            <ph p="w"/>
+            <ph p="r="/>
+            <ph p="l"/>
+            <ph p="d"/>
+          </syllable>
+        </t>
+        <t ph="' V v" pos="IN">
+          of
+          <syllable stress="1">
+            <ph p="V"/>
+            <ph p="v"/>
+          </syllable>
+        </t>
+        <t ph="' s p i tS " pos="NN">
+          speech
+          <syllable stress="1">
+            <ph p="s"/>
+            <ph p="p"/>
+            <ph p="i"/>
+            <ph p="tS"/>
+          </syllable>
+        </t>
+        <t ph="' s I n - T @ - s @ s" pos="NN">
+          synthesis
+          <syllable stress="1">
+            <ph p="s"/>
+            <ph p="I"/>
+            <ph p="n"/>
+          </syllable>
+          <syllable stress="0">
+            <ph p="T"/>
+            <ph p="@"/>
+          </syllable>
+          <syllable stress="0">
+            <ph p="s"/>
+            <ph p="@"/>
+            <ph p="s"/>
+          </syllable>
+        </t>
+        <t pos=".">
+          !
+        </t>
+      </phrase>
+  </s>
+</p>
+</maryxml>
