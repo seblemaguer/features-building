@@ -156,17 +156,19 @@ public class FeatureIT
 
         LevelProcessorFactory lvl_fact = new LevelProcessorFactory();
         lvl_fact.addLevelProcessor("current", "marytts.features.levelprocessor.CurrentLevel");
+        lvl_fact.addLevelProcessor("word", "marytts.features.levelprocessor.WordLevel");
 
         // Populate feature computer
         FeatureComputer fc = new FeatureComputer(lvl_fact, ctx_fact, feat_fact);
-        fc.addFeature("previous_word_text", "current", "previous", "text");
-        fc.addFeature("current_word_text", "current", "current", "text");
-        fc.addFeature("next_word_text", "current", "next", "text");
+        fc.addFeature("previous_word_text", "word", "previous", "text");
+        fc.addFeature("current_word_text", "word", "current", "text");
+        fc.addFeature("next_word_text", "word", "next", "text");
 
         //
         int i = 0;
-        for (Item item : utt.getSequence(SupportedSequenceType.WORD))
+        for (Item item : utt.getSequence(SupportedSequenceType.SYLLABLE))
         {
+            System.out.println("item_idx = " + i);
             FeatureMap map = fc.process(utt, item);
             System.out.print("item " + i + " = {");
             for (String key: map.keySet())
@@ -179,7 +181,4 @@ public class FeatureIT
 
         Assert.assertTrue(false);
     }
-
-
-
 }
