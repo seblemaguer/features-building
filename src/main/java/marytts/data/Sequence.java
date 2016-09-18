@@ -205,6 +205,9 @@ public class Sequence<E extends Item> extends ArrayList<E>
     @Override
     public String toString()
     {
-        return "Seq(" + hashCode() + ")";
+        if (this.size() > 0)
+            return "Seq(" + hashCode() + "," + get(0).getClass().getSimpleName() + ")";
+        else
+            return "Seq(" + hashCode() + ")";
     }
 }
