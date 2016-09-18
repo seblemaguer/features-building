@@ -118,9 +118,12 @@ public class RelationGraph
             RelationEdge first = list_edges.remove(0);
             Sequence<? extends Item> cur_source = (Sequence<? extends Item>) first.getSource();
             Sequence<? extends Item> cur_target = (Sequence<? extends Item>) first.getTarget();
-            final_rel = getRelations().get(new ImmutablePair<Sequence<? extends Item>, Sequence<? extends Item>>(cur_source, cur_target));
-            if (final_rel == null)
-                final_rel = getRelations().get(new ImmutablePair<Sequence<? extends Item>, Sequence<? extends Item>>(cur_target, cur_source)).getReverse();
+            if (cur_source == source)
+                final_rel = getRelations().get(new ImmutablePair<Sequence<? extends Item>, Sequence<? extends Item>>(cur_source, cur_target));
+            else
+            {
+                final_rel = getRelations().get(new ImmutablePair<Sequence<? extends Item>, Sequence<? extends Item>>(cur_source, cur_target)).getReverse();
+            }
 
             for (RelationEdge cur_edge: list_edges)
             {
