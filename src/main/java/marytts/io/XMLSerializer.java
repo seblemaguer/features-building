@@ -266,21 +266,20 @@ public class XMLSerializer implements Serializer
         Relation rel_word_syllable = utt.getRelation(SupportedSequenceType.WORD,
                                                      SupportedSequenceType.SYLLABLE);
         if (rel_word_syllable != null)
-            for (Syllable syl: (ArrayList<Syllable>) rel_word_syllable.getRelatedItems(w_index))
-                word_element.appendChild(exportSyllable(syl, doc));
-
+        {
+            int[] syls = rel_word_syllable.getRelatedIndexes(w_index);
+            for (int i=0; i<syls.length; i++)
+                word_element.appendChild(exportSyllable(utt, syls[i], doc));
+        }
         return word_element;
     }
 
-    public Element exportSyllable(Syllable syl, Document doc)
+    public Element exportSyllable(Utterance utt, int syl_index, Document doc)
     {
+        Syllable syl = ((Sequence<Syllable>) utt.getSequence(SupportedSequenceType.SYLLABLE)).get(syl_index);
         Element syllable_element = doc.createElementNS(NAMESPACE, "syllable");
 
         logger.info("Serializing syllable");
-
-        // Export subelements
-        for (Phoneme p: syl.getPhonemes())
-            syllable_element.appendChild(exportPhone(p, doc));
 
         if (syl.getTone() != null)
             syllable_element.setAttribute("tone", syl.getTone().getLabel());
@@ -290,15 +289,12 @@ public class XMLSerializer implements Serializer
 
         syllable_element.setAttribute("stress", Integer.toString(syl.getStressLevel()));
 
-        // ArrayList<Phoneme> phonemes = syllable.getPhonemes();
-        // if (phonemes.size() > 0)
-        // {
-        //     String phonemes_str = "";
-        //     for (int i=0; i<phonemes.size()-1; i++)
-        //         phonemes_str += phonemes.get(i).getLabel() + " - ";
-        //     phonemes_str += phonemes.get(phonemes.size() - 1).getLabel();
-        //     syllable_element.setAttribute("ph", phonemes_str);
-        // }
+
+        Relation rel_syllable_phone = utt.getRelation(SupportedSequenceType.SYLLABLE,
+                                                      SupportedSequenceType.PHONE);
+        if (rel_syllable_phone != null)
+            for (Phone phone: (ArrayList<Phone>) rel_syllable_phone.getRelatedItems(syl_index))
+                syllable_element.appendChild(exportPhone(phone, doc));
 
         return syllable_element;
     }
@@ -434,7 +430,8 @@ public class XMLSerializer implements Serializer
 
         // Create/modify the sequence by adding the paragraph
         Paragraph par = new Paragraph(text);
-        Sequence<Paragraph> seq_par = (Sequence<Paragraph>) utt.getSequence(SupportedSequenceType.PARAGRAPH);
+        Sequence<Paragraph> seq_par =
+            (Sequence<Paragraph>) utt.getSequence(SupportedSequenceType.PARAGRAPH);
         if (seq_par == null)
         {
             seq_par = new Sequence<Paragraph>();
@@ -743,7 +740,7 @@ public class XMLSerializer implements Serializer
             else if (node.getNodeType() == Node.ELEMENT_NODE)
             {
                 Element syllable_elt = (Element) node;
-                generateSyllable(syllable_elt, utt);
+                generateSyllable(syllable_elt, utt, alignments);
             }
             else
             {
@@ -812,11 +809,18 @@ public class XMLSerializer implements Serializer
         }
     }
 
-    public void generateSyllable(Element elt, Utterance utt)
+    public void generateSyllable(Element elt,
+                                 Utterance utt,
+                                 Hashtable<SequenceTypePair, ArrayList<IntegerPair>> alignments)
         throws MaryIOException
     {
         assert elt.getTagName() == "syllable";
         ArrayList<Phoneme> phoneme_list = new ArrayList<Phoneme>();
+
+
+        int phone_offset = 0;
+        if (utt.getSequence(SupportedSequenceType.PHONE) != null)
+            phone_offset = utt.getSequence(SupportedSequenceType.PHONE).size();
 
         NodeList nl = elt.getChildNodes();
         String text = null;
@@ -832,7 +836,7 @@ public class XMLSerializer implements Serializer
             else if (node.getNodeType() == Node.ELEMENT_NODE)
             {
                 Element phoneme_elt = (Element) node;
-                phoneme_list.add(generatePhoneme(phoneme_elt));
+                generatePhone(phoneme_elt, utt);
             }
             else
             {
@@ -859,17 +863,37 @@ public class XMLSerializer implements Serializer
         {
             stress_level = Integer.parseInt(elt.getAttribute("stress"));
         }
-        Syllable syl = new Syllable(phoneme_list, tone, stress_level, accent);
-
+        Syllable syl = new Syllable(tone, stress_level, accent);
 
         // Create the phrase and add the phrase to the
-        Sequence<Syllable> seq_syllable = (Sequence<Syllable>) utt.getSequence(SupportedSequenceType.SYLLABLE);
+        Sequence<Syllable> seq_syllable =
+            (Sequence<Syllable>) utt.getSequence(SupportedSequenceType.SYLLABLE);
         if (seq_syllable == null)
         {
             seq_syllable = new Sequence<Syllable>();
         }
         utt.addSequence(SupportedSequenceType.SYLLABLE, seq_syllable);
         seq_syllable.add(syl);
+
+        // Syllable/Phone alignment
+        if (!alignments.containsKey(new SequenceTypePair(SupportedSequenceType.SYLLABLE,
+                                                         SupportedSequenceType.PHONE)))
+        {
+            alignments.put(new SequenceTypePair(SupportedSequenceType.SYLLABLE,
+                                                SupportedSequenceType.PHONE),
+                           new ArrayList<IntegerPair>());
+        }
+
+        ArrayList<IntegerPair> alignment_syllable_phone =
+            alignments.get(new SequenceTypePair(SupportedSequenceType.SYLLABLE,
+                                                SupportedSequenceType.PHONE));
+
+        int size_phone = utt.getSequence(SupportedSequenceType.PHONE).size();
+        int id_syllable = seq_syllable.size() - 1;
+        for (int i=phone_offset; i < size_phone; i++)
+        {
+            alignment_syllable_phone.add(new IntegerPair(id_syllable, i));
+        }
 
     }
 
@@ -879,5 +903,21 @@ public class XMLSerializer implements Serializer
         assert elt.getTagName() == "ph";
         Phoneme ph = new Phoneme(elt.getAttribute("p"));
         return ph;
+    }
+
+    public void generatePhone(Element elt, Utterance utt)
+    {
+        assert elt.getTagName() == "ph";
+        Phoneme ph = new Phoneme(elt.getAttribute("p"));
+
+        // Create the phrase and add the phrase to the
+        Sequence<Phoneme> seq_phone =
+            (Sequence<Phoneme>) utt.getSequence(SupportedSequenceType.PHONE);
+        if (seq_phone == null)
+        {
+            seq_phone = new Sequence<Phoneme>();
+        }
+        utt.addSequence(SupportedSequenceType.PHONE, seq_phone);
+        seq_phone.add(ph);
     }
 }
