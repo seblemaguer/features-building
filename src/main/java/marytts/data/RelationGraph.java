@@ -108,7 +108,8 @@ public class RelationGraph
         // Try to build the relation
         synchronized(m_actual_graph)
         {
-            List<RelationEdge> list_edges = (new DijkstraShortestPath(m_actual_graph, source, target)).getPathEdgeList();
+            List<RelationEdge> list_edges =
+                (new DijkstraShortestPath(m_actual_graph, source, target)).getPathEdgeList();
 
             // No path found
             if (list_edges.isEmpty())
@@ -124,6 +125,7 @@ public class RelationGraph
             {
                 final_rel = getRelations().get(new ImmutablePair<Sequence<? extends Item>, Sequence<? extends Item>>(cur_source, cur_target)).getReverse();
             }
+            Sequence<? extends Item> prev_target = cur_target;
 
             for (RelationEdge cur_edge: list_edges)
             {
@@ -131,10 +133,17 @@ public class RelationGraph
                 cur_target = (Sequence<? extends Item>) cur_edge.getTarget();
 
                 Relation cur_rel = getRelations().get(new ImmutablePair<Sequence<? extends Item>, Sequence<? extends Item>>(cur_source, cur_target));
-                if (cur_rel == null)
-                    cur_rel = getRelations().get(new ImmutablePair<Sequence<? extends Item>, Sequence<? extends Item>>(cur_target, cur_source)).getReverse();
-
+                if (cur_source != prev_target)
+                {
+                    cur_rel = getRelations().get(new ImmutablePair<Sequence<? extends Item>, Sequence<? extends Item>>(cur_source, cur_target)).getReverse();
+                }
+                else
+                {
+                    System.out.println(cur_rel);
+                }
                 final_rel = final_rel.compose(cur_rel);
+
+                prev_target = cur_target;
             }
         }
         return final_rel;
