@@ -76,6 +76,9 @@ public class FeatureIT
 	public void generateWordText()
         throws Exception
     {
+        String[] list_previous_text_word =
+            {"Welcome", "to", "the", "world", "of", "speech", "synthesis", "!"};
+
         // Loading the XML
         XMLSerializer xml_ser = new XMLSerializer();
         Utterance utt = xml_ser.fromString(loadResourceIntoString("basedoc.xml"));
@@ -85,13 +88,13 @@ public class FeatureIT
         feat_fact.addFeatureProcessor("text", "marytts.features.featureprocessor.Text");
 
         //
+        int i = 0;
         for (Item item : utt.getSequence(SupportedSequenceType.WORD))
         {
             Feature feat = feat_fact.createFeatureProcessor("text").generate(utt, item);
-            System.out.println("val = " + feat.getValue());
+            Assert.assertEquals(feat.getValue(), list_previous_text_word[i]);
+            i++;
         }
-
-        Assert.assertTrue(false);
     }
 
 
@@ -103,6 +106,9 @@ public class FeatureIT
 	public void generateContextWordText()
         throws Exception
     {
+        String[] list_previous_text_word =
+            {null, "Welcome", "to", "the", "world", "of", "speech", "synthesis"};
+
         // Loading the XML
         XMLSerializer xml_ser = new XMLSerializer();
         Utterance utt = xml_ser.fromString(loadResourceIntoString("basedoc.xml"));
@@ -115,21 +121,22 @@ public class FeatureIT
         ctx_fact.addContextProcessor("previous", "marytts.features.contextprocessor.Previous");
 
         //
+        int i = 0;
         for (Item item : utt.getSequence(SupportedSequenceType.WORD))
         {
             Item prev_item = ctx_fact.createContextProcessor("previous").generate(utt, item);
             if (prev_item != null)
             {
                 Feature feat = feat_fact.createFeatureProcessor("text").generate(utt, prev_item);
-                System.out.println("val2 = " + feat.getValue());
+                Assert.assertEquals(feat.getValue(), list_previous_text_word[i]);
             }
             else
             {
-                System.out.println("val2 = null");
+                Assert.assertEquals(prev_item, null);
             }
-        }
 
-        Assert.assertTrue(false);
+            i++;
+        }
     }
 
 
@@ -168,21 +175,27 @@ public class FeatureIT
         fc.addFeature("current_word_text", "word", "current", "text");
         fc.addFeature("next_word_text", "word", "next", "text");
 
-        //
-        int i = 0;
+        String[] feature_names =
+            {"previous_phone_string", "current_phone_string", "next_phone_string",
+             "previous_word_text", "current_word_text", "next_word_text"};
+        String generated_labels = "";
         for (Item item : utt.getSequence(SupportedSequenceType.PHONE))
         {
-            System.out.println("item_idx = " + i);
             FeatureMap map = fc.process(utt, item);
-            System.out.print("item " + i + " = {");
-            for (String key: map.keySet())
+            for (int i=0; i<feature_names.length; i++)
             {
-                System.out.print(key + ": " + map.get(key).getValue() + ", ");
+                String value = map.get(feature_names[i]).getValue();
+                if (value == null)
+                    generated_labels += "x;";
+                else
+                    generated_labels += value + ";";
             }
-            System.out.println("}");
-            i++;
+            generated_labels += "\n";
         }
 
-        Assert.assertTrue(false);
+
+        String original_labels = loadResourceIntoString("welcome.lab");
+
+        Assert.assertEquals(original_labels, generated_labels);
     }
 }
