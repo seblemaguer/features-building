@@ -148,6 +148,7 @@ public class FeatureIT
         // Generate the category
         FeatureProcessorFactory feat_fact = new FeatureProcessorFactory();
         feat_fact.addFeatureProcessor("text", "marytts.features.featureprocessor.Text");
+        feat_fact.addFeatureProcessor("string", "marytts.features.featureprocessor.StringFeature");
 
         ContextProcessorFactory ctx_fact = new ContextProcessorFactory();
         ctx_fact.addContextProcessor("previous", "marytts.features.contextprocessor.Previous");
@@ -160,13 +161,16 @@ public class FeatureIT
 
         // Populate feature computer
         FeatureComputer fc = new FeatureComputer(lvl_fact, ctx_fact, feat_fact);
+        fc.addFeature("previous_phone_string", "current", "previous", "string");
+        fc.addFeature("current_phone_string", "current", "current", "string");
+        fc.addFeature("next_phone_string", "current", "next", "string");
         fc.addFeature("previous_word_text", "word", "previous", "text");
         fc.addFeature("current_word_text", "word", "current", "text");
         fc.addFeature("next_word_text", "word", "next", "text");
 
         //
         int i = 0;
-        for (Item item : utt.getSequence(SupportedSequenceType.SYLLABLE))
+        for (Item item : utt.getSequence(SupportedSequenceType.PHONE))
         {
             System.out.println("item_idx = " + i);
             FeatureMap map = fc.process(utt, item);
