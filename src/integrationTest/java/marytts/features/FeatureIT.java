@@ -140,6 +140,7 @@ public class FeatureIT
         // Generate the category
         FeatureProcessorFactory feat_fact = new FeatureProcessorFactory();
         feat_fact.addFeatureProcessor("string", "marytts.features.featureprocessor.StringFeature");
+        feat_fact.addFeatureProcessor("nb_syl", "marytts.features.featureprocessor.NbFromSyllableStart");
 
         ContextProcessorFactory ctx_fact = new ContextProcessorFactory();
         ctx_fact.addContextProcessor("previousprevious", "marytts.features.contextprocessor.PreviousPrevious");
@@ -158,9 +159,10 @@ public class FeatureIT
         fc.addFeature("current_phone_string", "current", "current", "string");
         fc.addFeature("next_phone_string", "current", "next", "string");
         fc.addFeature("nextnext_phone_string", "current", "nextnext", "string");
+        fc.addFeature("nbfromsylstart", "current", "current", "nb_syl");
 
         String[] feature_names =
-            {"previousprevious_phone_string", "previous_phone_string", "current_phone_string", "next_phone_string", "nextnext_phone_string"};
+            {"previousprevious_phone_string", "previous_phone_string", "current_phone_string", "next_phone_string", "nextnext_phone_string", "nbfromsylstart"};
         String generated_labels = "";
         for (Item item : utt.getSequence(SupportedSequenceType.PHONE))
         {
