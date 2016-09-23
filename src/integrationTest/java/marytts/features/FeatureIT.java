@@ -202,7 +202,10 @@ public class FeatureIT
         FeatureProcessorFactory feat_fact = new FeatureProcessorFactory();
         feat_fact.addFeatureProcessor("nbfromphrase", "marytts.features.featureprocessor.NbFromPhraseStart");
         feat_fact.addFeatureProcessor("nbfromword", "marytts.features.featureprocessor.NbFromWordStart");
+        feat_fact.addFeatureProcessor("nbphones", "marytts.features.featureprocessor.NbPhonesRelated");
         feat_fact.addFeatureProcessor("accented", "marytts.features.featureprocessor.AccentedFeature");
+        feat_fact.addFeatureProcessor("string", "marytts.features.featureprocessor.StringFeature");
+
 
         ContextProcessorFactory ctx_fact = new ContextProcessorFactory();
         ctx_fact.addContextProcessor("previous", "marytts.features.contextprocessor.Previous");
@@ -210,19 +213,22 @@ public class FeatureIT
         ctx_fact.addContextProcessor("next", "marytts.features.contextprocessor.Next");
 
         LevelProcessorFactory lvl_fact = new LevelProcessorFactory();
-        lvl_fact.addLevelProcessor("current", "marytts.features.levelprocessor.SyllableLevel");
+        lvl_fact.addLevelProcessor("current", "marytts.features.levelprocessor.CurrentLevel");
+        lvl_fact.addLevelProcessor("syllable", "marytts.features.levelprocessor.SyllableLevel");
 
         // Populate feature computer
         FeatureComputer fc = new FeatureComputer(lvl_fact, ctx_fact, feat_fact);
-        fc.addFeature("previous_syl_accented", "current", "previous", "accented");
-        fc.addFeature("current_syl_accented", "current", "current", "accented");
-        fc.addFeature("next_syl_accented", "current", "next", "accented");
+        fc.addFeature("previous_syl_accented", "syllable", "previous", "accented");
+        fc.addFeature("current_syl_accented", "syllable", "current", "accented");
+        fc.addFeature("next_syl_accented", "syllable", "next", "accented");
         fc.addFeature("current_syl_nbfromphrase", "current", "current", "nbfromphrase");
-        fc.addFeature("current_syl_nbfromword", "current", "current", "nbfromword");
+        fc.addFeature("current_syl_nbfromword", "syllable", "current", "nbfromword");
+        fc.addFeature("current_syl_nbphones", "syllable", "current", "nbphones");
+        fc.addFeature("current_phone", "current", "current", "string");
 
         String[] feature_names =
-            {"previous_syl_accented", "current_syl_accented", "next_syl_accented",
-             "current_syl_nbfromphrase", "current_syl_nbfromword"};
+            {"current_phone", "previous_syl_accented", "current_syl_accented", "next_syl_accented",
+             "current_syl_nbfromphrase", "current_syl_nbfromword", "current_syl_nbphones"};
         String generated_labels = "";
         for (Item item : utt.getSequence(SupportedSequenceType.PHONE))
         {
