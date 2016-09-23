@@ -259,6 +259,7 @@ public class FeatureIT
         FeatureProcessorFactory feat_fact = new FeatureProcessorFactory();
         feat_fact.addFeatureProcessor("text", "marytts.features.featureprocessor.TextFeature");
         feat_fact.addFeatureProcessor("pos", "marytts.features.featureprocessor.POSFeature");
+        feat_fact.addFeatureProcessor("nbfromphrase", "marytts.features.featureprocessor.NbFromPhraseStart");
 
         ContextProcessorFactory ctx_fact = new ContextProcessorFactory();
         ctx_fact.addContextProcessor("previous", "marytts.features.contextprocessor.Previous");
@@ -276,10 +277,14 @@ public class FeatureIT
         fc.addFeature("previous_word_pos", "word", "previous", "pos");
         fc.addFeature("current_word_pos", "word", "current", "pos");
         fc.addFeature("next_word_pos", "word", "next", "pos");
+        fc.addFeature("previous_word_nbfromphrase", "word", "previous", "nbfromphrase");
+        fc.addFeature("current_word_nbfromphrase", "word", "current", "nbfromphrase");
+        fc.addFeature("next_word_nbfromphrase", "word", "next", "nbfromphrase");
 
         String[] feature_names =
             {"previous_word_text", "current_word_text", "next_word_text",
-            "previous_word_pos", "current_word_pos", "next_word_pos"};
+             "previous_word_pos", "current_word_pos", "next_word_pos",
+             "previous_word_nbfromphrase", "current_word_nbfromphrase", "next_word_nbfromphrase"};
         String generated_labels = "";
         for (Item item : utt.getSequence(SupportedSequenceType.PHONE))
         {
