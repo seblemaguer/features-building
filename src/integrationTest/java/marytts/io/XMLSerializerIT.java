@@ -44,6 +44,9 @@ import org.xml.sax.InputSource;
 import marytts.util.dom.MaryEntityResolver;
 import marytts.util.string.StringUtils;
 
+import org.custommonkey.xmlunit.XMLUnit;
+import org.custommonkey.xmlunit.XMLAssert;
+
 /**
  * Test class for the main hts label generation module
  *
@@ -102,6 +105,8 @@ public class XMLSerializerIT
         System.out.println(doc_str);
         System.out.println("\n\ndoc 2 = ");
         System.out.println(xml_ser.toString(utt));
-        Assert.assertTrue(doc1.isEqualNode(doc2));
+
+        XMLUnit.setIgnoreWhitespace(true);
+        XMLAssert.assertXMLEqual(doc1, doc2);
     }
 }
