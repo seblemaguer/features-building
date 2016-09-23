@@ -53,21 +53,6 @@ public class FeatureIT
 		return buf.toString();
 	}
 
-
-    /**
-     * Check baseline for german
-     *
-     */
-	@Test
-	public void loadXML()
-        throws Exception
-    {
-        XMLSerializer xml_ser = new XMLSerializer();
-        Utterance utt = xml_ser.fromString(loadResourceIntoString("basedoc.xml"));
-
-        Assert.assertNotNull(utt);
-    }
-
     /**
      * Check baseline for german
      *

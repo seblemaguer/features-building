@@ -8,17 +8,17 @@ import marytts.data.Utterance;
 import marytts.data.item.Item;
 
 /**
- *
+ * This class is used to compute a map of Feature.
  *
  * @author <a href="mailto:slemaguer@coli.uni-saarland.de">Sébastien Le Maguer</a>
  */
 public class FeatureComputer
 {
-    protected Hashtable<String, String[]> m_features;
+    protected Hashtable<String, String[]> m_features; /*< The map of features available */
 
-    protected ContextProcessorFactory m_context_factory;
-    protected LevelProcessorFactory m_level_factory;
-    protected FeatureProcessorFactory m_feature_factory;
+    protected ContextProcessorFactory m_context_factory; /*< The factory which provide context processors */
+    protected LevelProcessorFactory m_level_factory; /*< The factory which provide level processors */
+    protected FeatureProcessorFactory m_feature_factory; /*< The factory which provide feature processors */
 
     public FeatureComputer(LevelProcessorFactory level_factory,
                            ContextProcessorFactory context_factory,
