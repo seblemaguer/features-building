@@ -10,19 +10,18 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 /**
- *
+ * Class which represents a word
  *
  * @author <a href="mailto:slemaguer@coli.uni-saarland.de">Sébastien Le Maguer</a>
  */
 public class Word extends Item
 {
-	private String m_POS;
-	private String m_text;
-    private String m_sounds_like;
-	private ArrayList<Phoneme> m_phonemes;
+	private String m_POS; /*< The POS tag of the word */
+	private String m_text; /*< The text of the word */
+    private String m_sounds_like; /*< */
 	private String m_g2p_method;
     private Locale m_alternative_locale;
-    private Accent m_accent;
+    private Accent m_accent; /*< The accent information */
 
 	public Word(String text)
     {
@@ -32,7 +31,6 @@ public class Word extends Item
         soundsLike(null);
         setG2PMethod(null);
         setAccent(null);
-        setPhonemes(new ArrayList<Phoneme>());
     }
 
     public Word(String text, Locale alternative_locale)
@@ -43,7 +41,6 @@ public class Word extends Item
         soundsLike(null);
         setG2PMethod(null);
         setAccent(null);
-        setPhonemes(new ArrayList<Phoneme>());
     }
 
 	public Word(String text, String sounds_like)
@@ -54,7 +51,6 @@ public class Word extends Item
         setG2PMethod(null);
         soundsLike(sounds_like);
         setAccent(null);
-        setPhonemes(new ArrayList<Phoneme>());
     }
 
     /***************************************************************************************
@@ -88,16 +84,6 @@ public class Word extends Item
     public void setAlternativeLocale(Locale alternative_locale)
     {
         m_alternative_locale = alternative_locale;
-    }
-
-    public ArrayList<Phoneme> getPhonemes()
-    {
-        return m_phonemes;
-    }
-
-    public void setPhonemes(ArrayList<Phoneme> phonemes)
-    {
-        m_phonemes = phonemes;
     }
 
     public String getG2PMethod()
