@@ -142,8 +142,8 @@ public class FeatureIT
         feat_fact.addFeatureProcessor("string", "marytts.features.featureprocessor.StringFeature");
 
         ContextProcessorFactory ctx_fact = new ContextProcessorFactory();
-        ctx_fact.addContextProcessor("previous", "marytts.features.contextprocessor.PreviousPrevious");
-        ctx_fact.addContextProcessor("previousprevious", "marytts.features.contextprocessor.Previous");
+        ctx_fact.addContextProcessor("previousprevious", "marytts.features.contextprocessor.PreviousPrevious");
+        ctx_fact.addContextProcessor("previous", "marytts.features.contextprocessor.Previous");
         ctx_fact.addContextProcessor("current", "marytts.features.contextprocessor.Current");
         ctx_fact.addContextProcessor("next", "marytts.features.contextprocessor.Next");
         ctx_fact.addContextProcessor("nextnext", "marytts.features.contextprocessor.NextNext");
