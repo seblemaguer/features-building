@@ -126,11 +126,11 @@ public class FeatureIT
 
 
     /**
-     * Check baseline for german
+     * Asserting word features
      *
      */
 	@Test
-	public void testFeatureComputer()
+	public void assertPhoneContext()
         throws Exception
     {
         // Loading the XML
@@ -139,30 +139,28 @@ public class FeatureIT
 
         // Generate the category
         FeatureProcessorFactory feat_fact = new FeatureProcessorFactory();
-        feat_fact.addFeatureProcessor("text", "marytts.features.featureprocessor.TextFeature");
         feat_fact.addFeatureProcessor("string", "marytts.features.featureprocessor.StringFeature");
 
         ContextProcessorFactory ctx_fact = new ContextProcessorFactory();
-        ctx_fact.addContextProcessor("previous", "marytts.features.contextprocessor.Previous");
+        ctx_fact.addContextProcessor("previous", "marytts.features.contextprocessor.PreviousPrevious");
+        ctx_fact.addContextProcessor("previousprevious", "marytts.features.contextprocessor.Previous");
         ctx_fact.addContextProcessor("current", "marytts.features.contextprocessor.Current");
         ctx_fact.addContextProcessor("next", "marytts.features.contextprocessor.Next");
+        ctx_fact.addContextProcessor("nextnext", "marytts.features.contextprocessor.NextNext");
 
         LevelProcessorFactory lvl_fact = new LevelProcessorFactory();
         lvl_fact.addLevelProcessor("current", "marytts.features.levelprocessor.CurrentLevel");
-        lvl_fact.addLevelProcessor("word", "marytts.features.levelprocessor.WordLevel");
 
         // Populate feature computer
         FeatureComputer fc = new FeatureComputer(lvl_fact, ctx_fact, feat_fact);
+        fc.addFeature("previousprevious_phone_string", "current", "previousprevious", "string");
         fc.addFeature("previous_phone_string", "current", "previous", "string");
         fc.addFeature("current_phone_string", "current", "current", "string");
         fc.addFeature("next_phone_string", "current", "next", "string");
-        fc.addFeature("previous_word_text", "word", "previous", "text");
-        fc.addFeature("current_word_text", "word", "current", "text");
-        fc.addFeature("next_word_text", "word", "next", "text");
+        fc.addFeature("nextnext_phone_string", "current", "nextnext", "string");
 
         String[] feature_names =
-            {"previous_phone_string", "current_phone_string", "next_phone_string",
-             "previous_word_text", "current_word_text", "next_word_text"};
+            {"previousprevious_phone_string", "previous_phone_string", "current_phone_string", "next_phone_string", "nextnext_phone_string"};
         String generated_labels = "";
         for (Item item : utt.getSequence(SupportedSequenceType.PHONE))
         {
@@ -179,8 +177,67 @@ public class FeatureIT
         }
 
 
-        String original_labels = loadResourceIntoString("welcome.lab");
+        String original_labels = loadResourceIntoString("welcome_phone.lab");
 
-        Assert.assertEquals(original_labels, generated_labels);
+        Assert.assertEquals(generated_labels, original_labels);
+    }
+
+
+    /**
+     * Asserting word features
+     *
+     */
+	@Test
+	public void assertWordFeature()
+        throws Exception
+    {
+        // Loading the XML
+        XMLSerializer xml_ser = new XMLSerializer();
+        Utterance utt = xml_ser.fromString(loadResourceIntoString("basedoc.xml"));
+
+        // Generate the category
+        FeatureProcessorFactory feat_fact = new FeatureProcessorFactory();
+        feat_fact.addFeatureProcessor("text", "marytts.features.featureprocessor.TextFeature");
+        feat_fact.addFeatureProcessor("pos", "marytts.features.featureprocessor.POSFeature");
+
+        ContextProcessorFactory ctx_fact = new ContextProcessorFactory();
+        ctx_fact.addContextProcessor("previous", "marytts.features.contextprocessor.Previous");
+        ctx_fact.addContextProcessor("current", "marytts.features.contextprocessor.Current");
+        ctx_fact.addContextProcessor("next", "marytts.features.contextprocessor.Next");
+
+        LevelProcessorFactory lvl_fact = new LevelProcessorFactory();
+        lvl_fact.addLevelProcessor("word", "marytts.features.levelprocessor.WordLevel");
+
+        // Populate feature computer
+        FeatureComputer fc = new FeatureComputer(lvl_fact, ctx_fact, feat_fact);
+        fc.addFeature("previous_word_text", "word", "previous", "text");
+        fc.addFeature("current_word_text", "word", "current", "text");
+        fc.addFeature("next_word_text", "word", "next", "text");
+        fc.addFeature("previous_word_pos", "word", "previous", "pos");
+        fc.addFeature("current_word_pos", "word", "current", "pos");
+        fc.addFeature("next_word_pos", "word", "next", "pos");
+
+        String[] feature_names =
+            {"previous_word_text", "current_word_text", "next_word_text",
+            "previous_word_pos", "current_word_pos", "next_word_pos"};
+        String generated_labels = "";
+        for (Item item : utt.getSequence(SupportedSequenceType.PHONE))
+        {
+            FeatureMap map = fc.process(utt, item);
+            for (int i=0; i<feature_names.length; i++)
+            {
+                String value = map.get(feature_names[i]).getValue();
+                if (value == null)
+                    generated_labels += "x;";
+                else
+                    generated_labels += value + ";";
+            }
+            generated_labels += "\n";
+        }
+
+
+        String original_labels = loadResourceIntoString("welcome_word.lab");
+
+        Assert.assertEquals(generated_labels, original_labels);
     }
 }

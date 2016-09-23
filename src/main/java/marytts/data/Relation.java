@@ -191,6 +191,21 @@ public class Relation
         return indexes;
     }
 
+    public int[] getSourceRelatedIndexes(int source_index)
+    {
+        assert (source_index >= 0) && (source_index < getRelations().rows());
+
+        IntArrayList row = new IntArrayList();
+        getRelations().viewRow(source_index).getNonZeros(row, null);
+
+        int[] indexes = new int[row.size()];
+        for (int i=0; i<row.size(); i++)
+            indexes[i] = row.get(i);
+
+        return indexes;
+    }
+
+
     public ArrayList<? extends Item> getRelatedItems(int source_index)
     {
         int[] indexes = getRelatedIndexes(source_index);
