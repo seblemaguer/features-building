@@ -201,6 +201,7 @@ public class FeatureIT
         // Generate the category
         FeatureProcessorFactory feat_fact = new FeatureProcessorFactory();
         feat_fact.addFeatureProcessor("nbfromphrase", "marytts.features.featureprocessor.NbFromPhraseStart");
+        feat_fact.addFeatureProcessor("nbfromword", "marytts.features.featureprocessor.NbFromWordStart");
         feat_fact.addFeatureProcessor("accented", "marytts.features.featureprocessor.AccentedFeature");
 
         ContextProcessorFactory ctx_fact = new ContextProcessorFactory();
@@ -213,16 +214,15 @@ public class FeatureIT
 
         // Populate feature computer
         FeatureComputer fc = new FeatureComputer(lvl_fact, ctx_fact, feat_fact);
-        fc.addFeature("previous_syl_nbfromphrase", "current", "previous", "nbfromphrase");
-        fc.addFeature("current_syl_nbfromphrase", "current", "current", "nbfromphrase");
-        fc.addFeature("next_syl_nbfromphrase", "current", "next", "nbfromphrase");
         fc.addFeature("previous_syl_accented", "current", "previous", "accented");
         fc.addFeature("current_syl_accented", "current", "current", "accented");
         fc.addFeature("next_syl_accented", "current", "next", "accented");
+        fc.addFeature("current_syl_nbfromphrase", "current", "current", "nbfromphrase");
+        fc.addFeature("current_syl_nbfromword", "current", "current", "nbfromword");
 
         String[] feature_names =
-            {"previous_syl_nbfromphrase", "current_syl_nbfromphrase", "next_syl_nbfromphrase",
-             "previous_syl_accented", "current_syl_accented", "next_syl_accented"};
+            {"previous_syl_accented", "current_syl_accented", "next_syl_accented",
+             "current_syl_nbfromphrase", "current_syl_nbfromword"};
         String generated_labels = "";
         for (Item item : utt.getSequence(SupportedSequenceType.PHONE))
         {
