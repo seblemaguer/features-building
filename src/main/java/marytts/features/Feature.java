@@ -9,15 +9,17 @@ import marytts.data.item.Item;
  */
 public class Feature extends Item
 {
-    String m_value;
-    public Feature(String value)
+    Object m_value;
+    public Feature(Object value)
     {
         m_value = value;
     }
 
     public String getValue()
     {
-        return m_value;
+        if (m_value == null)
+            return null;
+        return m_value.toString();
     }
 
     @Override

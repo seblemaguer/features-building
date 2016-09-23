@@ -12,13 +12,12 @@ import marytts.features.FeatureProcessor;
  *
  * @author <a href="mailto:slemaguer@coli.uni-saarland.de">Sébastien Le Maguer</a>
  */
-public class POS implements FeatureProcessor
+public class TextFeature implements FeatureProcessor
 {
-
     public Feature generate(Utterance utt, Item item) throws Exception
     {
         if (item instanceof marytts.data.item.linguistic.Word)
-            return new Feature(((Word) item).getPOS());
+            return new Feature(((Word) item).getText());
 
         throw new Exception();
     }

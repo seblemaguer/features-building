@@ -70,7 +70,7 @@ public class FeatureIT
 
         // Generate the category
         FeatureProcessorFactory feat_fact = new FeatureProcessorFactory();
-        feat_fact.addFeatureProcessor("text", "marytts.features.featureprocessor.Text");
+        feat_fact.addFeatureProcessor("text", "marytts.features.featureprocessor.TextFeature");
 
         //
         int i = 0;
@@ -100,7 +100,7 @@ public class FeatureIT
 
         // Generate the category
         FeatureProcessorFactory feat_fact = new FeatureProcessorFactory();
-        feat_fact.addFeatureProcessor("text", "marytts.features.featureprocessor.Text");
+        feat_fact.addFeatureProcessor("text", "marytts.features.featureprocessor.TextFeature");
 
         ContextProcessorFactory ctx_fact = new ContextProcessorFactory();
         ctx_fact.addContextProcessor("previous", "marytts.features.contextprocessor.Previous");
@@ -139,7 +139,7 @@ public class FeatureIT
 
         // Generate the category
         FeatureProcessorFactory feat_fact = new FeatureProcessorFactory();
-        feat_fact.addFeatureProcessor("text", "marytts.features.featureprocessor.Text");
+        feat_fact.addFeatureProcessor("text", "marytts.features.featureprocessor.TextFeature");
         feat_fact.addFeatureProcessor("string", "marytts.features.featureprocessor.StringFeature");
 
         ContextProcessorFactory ctx_fact = new ContextProcessorFactory();
