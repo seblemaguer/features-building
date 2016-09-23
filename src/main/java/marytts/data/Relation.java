@@ -191,16 +191,16 @@ public class Relation
         return indexes;
     }
 
-    public int[] getSourceRelatedIndexes(int source_index)
+    public int[] getSourceRelatedIndexes(int target_index)
     {
-        assert (source_index >= 0) && (source_index < getRelations().rows());
+        assert (target_index >= 0) && (target_index < getRelations().columns());
 
-        IntArrayList row = new IntArrayList();
-        getRelations().viewRow(source_index).getNonZeros(row, null);
+        IntArrayList column = new IntArrayList();
+        getRelations().viewColumn(target_index).getNonZeros(column, null);
 
-        int[] indexes = new int[row.size()];
-        for (int i=0; i<row.size(); i++)
-            indexes[i] = row.get(i);
+        int[] indexes = new int[column.size()];
+        for (int i=0; i<column.size(); i++)
+            indexes[i] = column.get(i);
 
         return indexes;
     }
