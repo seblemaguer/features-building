@@ -126,7 +126,7 @@ public class FeatureIT
 
 
     /**
-     * Asserting word features
+     * Asserting phone features
      *
      */
 	@Test
@@ -178,6 +178,61 @@ public class FeatureIT
 
 
         String original_labels = loadResourceIntoString("welcome_phone.lab");
+
+        Assert.assertEquals(generated_labels, original_labels);
+    }
+
+
+
+    /**
+     * Asserting word features
+     *
+     */
+	@Test
+	public void assertSyllableContext()
+        throws Exception
+    {
+        // Loading the XML
+        XMLSerializer xml_ser = new XMLSerializer();
+        Utterance utt = xml_ser.fromString(loadResourceIntoString("basedoc.xml"));
+
+        // Generate the category
+        FeatureProcessorFactory feat_fact = new FeatureProcessorFactory();
+        feat_fact.addFeatureProcessor("nbfromphrase", "marytts.features.featureprocessor.NbFromPhraseStart");
+
+        ContextProcessorFactory ctx_fact = new ContextProcessorFactory();
+        ctx_fact.addContextProcessor("previous", "marytts.features.contextprocessor.Previous");
+        ctx_fact.addContextProcessor("current", "marytts.features.contextprocessor.Current");
+        ctx_fact.addContextProcessor("next", "marytts.features.contextprocessor.Next");
+
+        LevelProcessorFactory lvl_fact = new LevelProcessorFactory();
+        lvl_fact.addLevelProcessor("current", "marytts.features.levelprocessor.SyllableLevel");
+
+        // Populate feature computer
+        FeatureComputer fc = new FeatureComputer(lvl_fact, ctx_fact, feat_fact);
+        fc.addFeature("previous_syl_nbfromphrase", "current", "previous", "nbfromphrase");
+        fc.addFeature("current_syl_nbfromphrase", "current", "current", "nbfromphrase");
+        fc.addFeature("next_syl_nbfromphrase", "current", "next", "nbfromphrase");
+
+        String[] feature_names =
+            {"previous_syl_nbfromphrase", "current_syl_nbfromphrase", "next_syl_nbfromphrase"};
+        String generated_labels = "";
+        for (Item item : utt.getSequence(SupportedSequenceType.PHONE))
+        {
+            FeatureMap map = fc.process(utt, item);
+            for (int i=0; i<feature_names.length; i++)
+            {
+                String value = map.get(feature_names[i]).getValue();
+                if (value == null)
+                    generated_labels += "x;";
+                else
+                    generated_labels += value + ";";
+            }
+            generated_labels += "\n";
+        }
+
+
+        String original_labels = loadResourceIntoString("welcome_syl.lab");
 
         Assert.assertEquals(generated_labels, original_labels);
     }
