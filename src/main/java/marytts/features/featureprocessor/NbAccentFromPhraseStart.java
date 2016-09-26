@@ -34,7 +34,7 @@ public class NbAccentFromPhraseStart implements FeatureProcessor
             if (phr_indexes.length <= 0)
                 return Feature.UNDEF_FEATURE;
 
-            // Finding the itemlables related to the related phrase
+            // Finding the items related to the related phrase
             int[] item_indexes = rel.getSourceRelatedIndexes(phr_indexes[0]);
             if (item_indexes.length <= 0)
                 return Feature.UNDEF_FEATURE;

@@ -22,7 +22,7 @@ public class NbSylRelated implements FeatureProcessor
     public Feature generate(Utterance utt, Item item) throws Exception
     {
         Sequence<Item> seq_item = (Sequence<Item>) item.getSequence();
-        Relation rel = utt.getRelation(seq_item, utt.getSequence(SupportedSequenceType.SYLLABLES));
+        Relation rel = utt.getRelation(seq_item, utt.getSequence(SupportedSequenceType.SYLLABLE));
         int item_idx = seq_item.indexOf(item);
 
         // Find the related sylase

@@ -28,18 +28,16 @@ public class NbFromSyllableStart implements FeatureProcessor
         Relation rel = utt.getRelation(seq_item, utt.getSequence(SupportedSequenceType.SYLLABLE));
         int item_idx = seq_item.indexOf(item);
 
-        // Find the related sylase
+        // Find the related syllable
         int[] syl_indexes = rel.getRelatedIndexes(item_idx);
         if (syl_indexes.length <= 0)
             return Feature.UNDEF_FEATURE;
 
-        // Finding the itemlables related to the related sylase
-        System.out.println("index = " + syl_indexes[0]);
+        // Finding the items related to the related syllable
         int[] item_indexes = rel.getSourceRelatedIndexes(syl_indexes[0]);
         if (item_indexes.length <= 0)
             return Feature.UNDEF_FEATURE;
 
-        System.out.println("index2 = " + item_indexes[0]);
         int nb = item_idx - item_indexes[0];
         return new Feature(nb);
     }
