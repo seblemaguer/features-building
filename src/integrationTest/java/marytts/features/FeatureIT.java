@@ -201,7 +201,9 @@ public class FeatureIT
         // Generate the category
         FeatureProcessorFactory feat_fact = new FeatureProcessorFactory();
         feat_fact.addFeatureProcessor("nbfromphrase", "marytts.features.featureprocessor.NbFromPhraseStart");
+        feat_fact.addFeatureProcessor("nbtophrase", "marytts.features.featureprocessor.NbToPhraseEnd");
         feat_fact.addFeatureProcessor("nbfromword", "marytts.features.featureprocessor.NbFromWordStart");
+        feat_fact.addFeatureProcessor("nbtoword", "marytts.features.featureprocessor.NbToWordEnd");
         feat_fact.addFeatureProcessor("nbphones", "marytts.features.featureprocessor.NbPhonesRelated");
         feat_fact.addFeatureProcessor("accented", "marytts.features.featureprocessor.AccentedFeature");
         feat_fact.addFeatureProcessor("string", "marytts.features.featureprocessor.StringFeature");
@@ -222,13 +224,17 @@ public class FeatureIT
         fc.addFeature("current_syl_accented", "syllable", "current", "accented");
         fc.addFeature("next_syl_accented", "syllable", "next", "accented");
         fc.addFeature("current_syl_nbfromphrase", "current", "current", "nbfromphrase");
+        fc.addFeature("current_syl_nbtophrase", "current", "current", "nbtophrase");
         fc.addFeature("current_syl_nbfromword", "syllable", "current", "nbfromword");
+        fc.addFeature("current_syl_nbtoword", "current", "current", "nbtoword");
         fc.addFeature("current_syl_nbphones", "syllable", "current", "nbphones");
         fc.addFeature("current_phone", "current", "current", "string");
 
         String[] feature_names =
             {"current_phone", "previous_syl_accented", "current_syl_accented", "next_syl_accented",
-             "current_syl_nbfromphrase", "current_syl_nbfromword", "current_syl_nbphones"};
+             "current_syl_nbfromphrase", "current_syl_nbtophrase",
+             "current_syl_nbfromword", "current_syl_nbtoword",
+             "current_syl_nbphones"};
         String generated_labels = "";
         for (Item item : utt.getSequence(SupportedSequenceType.PHONE))
         {
